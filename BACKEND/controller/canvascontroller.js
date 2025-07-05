@@ -35,7 +35,7 @@ const loadCanvas = async (req,res) => {
 
 const updateCanvas = async (req,res)=>{
   const email = req.email;
-  const id= req.params.id;
+  const id= req.params.id; 
   const {elements} = req.body;
   try {
     const canvas= await canvasModel.updateCanvas(email,id,elements);

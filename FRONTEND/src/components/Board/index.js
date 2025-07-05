@@ -1,15 +1,12 @@
 import { useContext, useEffect, useLayoutEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import rough from "roughjs";
 import boardContext from "../../store/board-context";
 import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
 import toolboxContext from "../../store/toolbox-context";
-import updateCanvas from "../../utils/api";
 
 import classes from "./index.module.css";
 
 function Board({id}) {
-  const navigate = useNavigate();
   const canvasRef = useRef();
   const textAreaRef = useRef();
   const {
@@ -102,7 +99,6 @@ function Board({id}) {
 
   const handleMouseUp = () => {
     boardMouseUpHandler();
-    updateCanvas(id,elements,navigate);
   };
 
   return (

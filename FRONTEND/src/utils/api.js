@@ -7,7 +7,7 @@ const updateCanvas = async (id, elements, navigate) => {
       return navigate("/login");
     }
     const response = await fetch(
-      `${process.env.REACT_APP_API_BASE_URL}/canvas/update/${id}`,
+      `http://localhost:3030/canvas/update/${id}`,
       {
         method: "PUT",
         headers: {
@@ -18,6 +18,7 @@ const updateCanvas = async (id, elements, navigate) => {
       }
     );
     const data = await response.json();
+    console.log(data);
     if (!response.ok) {
       throw new Error(data.message || "Failed to update Canvas");
     }
