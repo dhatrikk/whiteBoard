@@ -1,0 +1,29 @@
+# ========================
+# Global ignores
+# ========================
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+.vscode/
+dist/
+build/
+
+# ========================
+# Backend-specific ignores
+# ========================
+/BACKEND/node_modules/
+/BACKEND/.env
+/BACKEND/logs/
+/BACKEND/uploads/
+
+# ========================
+# Frontend-specific ignores
+# ========================
+/FRONTEND/node_modules/
+/FRONTEND/.env
+/FRONTEND/.next/         # if using Next.js
+/FRONTEND/dist/          # if using Vite or similar
+/FRONTEND/build/         # if using Create React App
+/FRONTEND/.cache/
