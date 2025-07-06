@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 
@@ -11,7 +11,8 @@ function Profile() {
 
   const token = localStorage.getItem("token");
 
-  const fetchData = async () => {
+  // ✅ FIX 1: Wrapped fetchData in useCallback to fix ESLint and make it reusable
+  const fetchData = useCallback(async () => {
     if (!token) return navigate("/login");
 
     try {
@@ -31,17 +32,46 @@ function Profile() {
       console.error("Error:", err);
       navigate("/login");
     }
-  };
+  }, [token, navigate]); // ✅ Included dependencies to ensure stability
 
+  // ✅ FIX 2: Used fetchData in useEffect and added it to dependencies
   useEffect(() => {
     fetchData();
-  }, [token, navigate]);
+  }, [fetchData]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  // ✅ FIX 3: Call fetchData after delete to refresh canvas list
+  const handleDelete = async (id, name) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3030/canvas/delete/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete canvas");
+      }
+      alert(`${name} deleted successfully!`);
+
+      fetchData(); // ✅ Refresh list after delete
+    } catch (error) {
+      console.error("Delete error:", error.message);
+    }
+  };
+
+  // ✅ FIX 4: Call fetchData after creating new canvas to refresh list
   const handleCreateCanvas = async (e) => {
     e.preventDefault();
     if (!canvasName.trim()) return;
@@ -58,7 +88,7 @@ function Profile() {
 
       if (res.ok) {
         setCanvasName("");
-        fetchData(); // Refresh canvas list
+        fetchData(); // ✅ Refresh list after creating new canvas
       } else {
         console.error("Canvas creation failed");
       }
@@ -115,7 +145,7 @@ function Profile() {
         </form>
 
         {/* Canvas List */}
-        <div className=" p-6 rounded-xl  w-full max-w-7xl">
+        <div className="p-6 rounded-xl w-full max-w-7xl">
           <h3 className="text-3xl font-semibold mb-4">Your Canvases:</h3>
           {canvases.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -135,7 +165,8 @@ function Profile() {
                     {new Date(canvas.createdAt).toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <strong>Elements:</strong> {(canvas.elements || []).length}
+                    <strong>Elements:</strong>{" "}
+                    {(canvas.elements || []).length}
                   </p>
                   <p className="text-sm text-gray-600 mb-2">
                     <strong>Shared With:</strong>{" "}
@@ -153,7 +184,7 @@ function Profile() {
                     </button>
 
                     <button
-                      onClick={() => alert("Delete logic not implemented yet")}
+                      onClick={() => handleDelete(canvas._id,canvas.name)}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow transition duration-200 text-sm"
                     >
                       Delete

@@ -15,10 +15,12 @@ const canvasSchema = new mongoose.Schema(
     elements: {
       type: [{ type: mongoose.Schema.Types.Mixed }],
     },
-    sharedwith: [{
+    sharedwith: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
-      }],
+      },
+    ],
   },
   {
     timestamps: true,
@@ -34,7 +36,7 @@ canvasSchema.statics.getAllCanvas = async function (email) {
   const canvases = await this.find({
     $or: [{ sharedwith: user._id }, { owner: user._id }],
   });
-  if(!canvases){
+  if (!canvases) {
     throw new Error("Canvas not found");
   }
   return canvases;
@@ -54,31 +56,52 @@ canvasSchema.statics.createCanvas = async function (email, name) {
   return newUser;
 };
 
-canvasSchema.statics.loadCanvas = async function (email,id) {
+canvasSchema.statics.loadCanvas = async function (email, id) {
   const user = await mongoose.model("Users").findOne({ email: email });
   if (!user) {
     throw new Error("User not found");
   }
-  const canvas = await this.findOne({_id:id, $or: [{ sharedwith: user._id }, { owner: user._id }]});
-  if(!canvas){
+  const canvas = await this.findOne({
+    _id: id,
+    $or: [{ sharedwith: user._id }, { owner: user._id }],
+  });
+  if (!canvas) {
     throw new Error("Canvas not found");
   }
   return canvas;
-}
+};
 
-canvasSchema.statics.updateCanvas = async function (email,id,elements){
-  const user = await mongoose.model("Users").findOne({email:email});
-  if(!user){
+canvasSchema.statics.updateCanvas = async function (email, id, elements) {
+  const user = await mongoose.model("Users").findOne({ email: email });
+  if (!user) {
     throw new Error("User not found");
   }
-  const canvas = await this.findOne({_id:id,$or:[{owner:user._id},{sharedwith:user._id}]});
-  if(!canvas){
+  const canvas = await this.findOne({
+    _id: id,
+    $or: [{ owner: user._id }, { sharedwith: user._id }],
+  });
+  if (!canvas) {
     throw new Error("Canvas not found");
   }
-  canvas.elements=elements;
+  canvas.elements = elements;
   const updatedCanvas = await canvas.save();
   return updatedCanvas;
-}
+};
+
+canvasSchema.statics.deleteCanvas = async function (email, id) {
+  const user = await mongoose.model("Users").findOne({ email: email });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const canvas = await this.findOneAndDelete({
+    _id: id,
+    $or: [{ owner: user._id }, { sharedwith: user._id }],
+  });
+  if (!canvas) {
+    throw new Error("Canvas not found");
+  }
+  return canvas;
+};
 
 const canvasModel = mongoose.model("Canvas", canvasSchema);
 

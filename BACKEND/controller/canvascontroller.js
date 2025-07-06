@@ -46,4 +46,16 @@ const updateCanvas = async (req,res)=>{
   }
 }
 
-module.exports = { getAllCanvas, createCanvas, loadCanvas, updateCanvas };
+const deleteCanvas = async (req,res)=>{
+  const email = req.email;
+  const id = req.params.id;
+  try{
+    const canvas = await canvasModel.deleteCanvas(email,id);
+    res.status(200).json(canvas);
+  }catch (error) {
+    res.status(400).json({message: error.message});
+
+  }
+}
+
+module.exports = { getAllCanvas, createCanvas, loadCanvas, updateCanvas, deleteCanvas };
