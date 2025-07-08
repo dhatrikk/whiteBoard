@@ -103,6 +103,34 @@ canvasSchema.statics.deleteCanvas = async function (email, id) {
   return canvas;
 };
 
+canvasSchema.statics.shareCanvas = async function (email, id, shareEmail) {
+  const user = await mongoose.model("Users").findOne({ email: email });
+  if (!user) {
+    throw new Error("user not found");
+  }
+  const canvas = await this.findOne({
+    _id: id,
+    owner: user._id,
+  });
+  if (!canvas) {
+    throw new Error("Canvas not found");
+  }
+  const shareUser = await mongoose.model("Users").findOne({ email: shareEmail });
+  if (!shareUser) {
+    throw new Error("Share user not found");
+  }
+  // Check if already shared
+  if (canvas.sharedwith.includes(shareUser._id)) {
+    throw new Error("Canvas already shared with this user");
+  }
+
+  // Add to sharedwith array
+  canvas.sharedwith.push(shareUser._id);
+  const updatedCanvas = await canvas.save();
+
+  return updatedCanvas;
+};
+
 const canvasModel = mongoose.model("Canvas", canvasSchema);
 
 module.exports = canvasModel;

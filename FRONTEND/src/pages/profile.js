@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 
@@ -7,11 +7,13 @@ function Profile() {
   const [canvases, setCanvases] = useState([]);
   const [canvasName, setCanvasName] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
+  const [activeShareId, setActiveShareId] = useState(null); // 🟢 NEW: which canvas is sharing
+  const [shareEmail, setShareEmail] = useState(""); // 🟢 NEW: email input for sharing
+
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // ✅ FIX 1: Wrapped fetchData in useCallback to fix ESLint and make it reusable
   const fetchData = useCallback(async () => {
     if (!token) return navigate("/login");
 
@@ -32,9 +34,8 @@ function Profile() {
       console.error("Error:", err);
       navigate("/login");
     }
-  }, [token, navigate]); // ✅ Included dependencies to ensure stability
+  }, [token, navigate]);
 
-  // ✅ FIX 2: Used fetchData in useEffect and added it to dependencies
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -44,7 +45,6 @@ function Profile() {
     navigate("/login");
   };
 
-  // ✅ FIX 3: Call fetchData after delete to refresh canvas list
   const handleDelete = async (id, name) => {
     try {
       const response = await fetch(
@@ -64,14 +64,12 @@ function Profile() {
         throw new Error(data.message || "Failed to delete canvas");
       }
       alert(`${name} deleted successfully!`);
-
-      fetchData(); // ✅ Refresh list after delete
+      fetchData();
     } catch (error) {
       console.error("Delete error:", error.message);
     }
   };
 
-  // ✅ FIX 4: Call fetchData after creating new canvas to refresh list
   const handleCreateCanvas = async (e) => {
     e.preventDefault();
     if (!canvasName.trim()) return;
@@ -88,12 +86,43 @@ function Profile() {
 
       if (res.ok) {
         setCanvasName("");
-        fetchData(); // ✅ Refresh list after creating new canvas
+        fetchData();
       } else {
         console.error("Canvas creation failed");
       }
     } catch (err) {
       console.error("Error creating canvas:", err);
+    }
+  };
+
+  // 🟢 Handle Share Submission
+  const handleShareSubmit = async (canvasId) => {
+    if (!shareEmail.trim()) return;
+    console.log("Sharing with:", shareEmail); // ✅ add this before fetch
+
+    try {
+      const res = await fetch(
+        `http://localhost:3030/canvas/shareCanvas/${canvasId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ shareEmail }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to share canvas");
+
+      alert(`Canvas shared with ${shareEmail}`);
+      setShareEmail("");
+      setActiveShareId(null);
+      fetchData();
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -184,12 +213,42 @@ function Profile() {
                     </button>
 
                     <button
-                      onClick={() => handleDelete(canvas._id,canvas.name)}
+                      onClick={() =>
+                        setActiveShareId(
+                          activeShareId === canvas._id ? null : canvas._id
+                        )
+                      }
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow transition duration-200 text-sm"
+                    >
+                      Share
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(canvas._id, canvas.name)}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl shadow transition duration-200 text-sm"
                     >
                       Delete
                     </button>
                   </div>
+
+                  {/* 🟢 Inline Email Input Box */}
+                  {activeShareId === canvas._id && (
+                    <div className="mt-4 flex flex-col gap-2">
+                      <input
+                        type="email"
+                        value={shareEmail}
+                        onChange={(e) => setShareEmail(e.target.value)}
+                        placeholder="Enter email to share"
+                        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        onClick={() => handleShareSubmit(canvas._id)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded"
+                      >
+                        Share Now
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
