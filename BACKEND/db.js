@@ -1,6 +1,8 @@
 const mongoose= require("mongoose");
+require('dotenv').config();
 
-const connectionstring ="mongodb+srv://DhatrikExpense:VrFBzZooBv3YrlJo@cluster0.tb2ah.mongodb.net/WHITEBOARD?retryWrites=true&w=majority&appName=Cluster0";
+
+const connectionstring =process.env.MONGO_URI;
 
 const connectToDB = async() => {
     try {

@@ -18,13 +18,13 @@ function Profile() {
     if (!token) return navigate("/login");
 
     try {
-      const userRes = await fetch("http://localhost:3030/user/userProfile", {
+      const userRes = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/userProfile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const userData = await userRes.json();
       setUser(userData);
 
-      const canvasRes = await fetch("http://localhost:3030/canvas", {
+      const canvasRes = await fetch(`${process.env.REACT_APP_API_BASE_URL}/canvas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const canvasData = await canvasRes.json();
@@ -48,7 +48,7 @@ function Profile() {
   const handleDelete = async (id, name) => {
     try {
       const response = await fetch(
-        `http://localhost:3030/canvas/delete/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}canvas/delete/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -75,7 +75,7 @@ function Profile() {
     if (!canvasName.trim()) return;
 
     try {
-      const res = await fetch("http://localhost:3030/canvas", {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/canvas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ function Profile() {
 
     try {
       const res = await fetch(
-        `http://localhost:3030/canvas/shareCanvas/${canvasId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/canvas/shareCanvas/${canvasId}`,
         {
           method: "PUT",
           headers: {

@@ -10,7 +10,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:3030/user/register", {
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),

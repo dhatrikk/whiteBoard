@@ -17,7 +17,9 @@ const canvasroutes = require("./routes/canvasroutes.js");
 app.use("/user",userroutes);
 app.use("/",canvasroutes);
 
-app.listen(3030,()=>{
-console.log("3030 connected");
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT,()=>{
+console.log(`${PORT} connected`);
 });
 

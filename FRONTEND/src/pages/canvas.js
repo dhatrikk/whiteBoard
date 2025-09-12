@@ -23,7 +23,7 @@ function Canvas() {
       if (!token) return navigate("/login");
 
       try {
-        const res = await fetch(`http://localhost:3030/canvas/${id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/canvas/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,42 +75,46 @@ function CanvasWithContext({ id, navigate, canvasData }) {
   };
 
   return (
-    <>
-      {/* Canvas Metadata */}
-      <div className="p-4 bg-white shadow-md border-b border-gray-200 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold">{canvasData.name}</h2>
-          <p className="text-gray-500 text-sm">
-            Created: {new Date(canvasData.createdAt).toLocaleString()}
-          </p>
-          <p className="text-gray-500 text-sm">
-            Updated: {new Date(canvasData.updatedAt).toLocaleString()}
-          </p>
-        </div>
+    <div className="relative w-full h-full">
 
-        <div className="flex gap-3 ml-auto">
-          <button
-            onClick={() => navigate("/profile")}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
-          >
-            Back
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            Save
-          </button>
-        </div>
-      </div>
+  {/* Canvas Layout */}
+  <div className="flex flex-col md:flex-row h-full">
+    <Toolbar />
+    <Board id={id} />
+    <Toolbox />
+  </div>
+  
 
-      {/* Canvas Layout */}
-      <div className="flex flex-col md:flex-row">
-        <Toolbar />
-        <Board id={id} />
-        <Toolbox />
-      </div>
-    </>
+  {/* Canvas Metadata Overlay */}
+  <div className="absolute top-0 left-0 w-full p-4 bg-white/90 shadow-md border-b border-gray-200 flex items-center justify-between z-20">
+    <div>
+      <h2 className="text-2xl font-semibold">{canvasData.name}</h2>
+      <p className="text-gray-500 text-sm">
+        Created: {new Date(canvasData.createdAt).toLocaleString()}
+      </p>
+      <p className="text-gray-500 text-sm">
+        Updated: {new Date(canvasData.updatedAt).toLocaleString()}
+      </p>
+    </div>
+
+    <div className="flex gap-3 ml-auto">
+      <button
+        onClick={() => navigate("/profile")}
+        className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
+      >
+        Back
+      </button>
+      <button
+        onClick={handleSave}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+
   );
 }
 

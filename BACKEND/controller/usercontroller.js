@@ -5,7 +5,7 @@ const registerUser = async function (req, res) {
   try {
     const newUser = await userModel.registerUser(req.body);
     res.status(201).json({ newUser });
-  } catch (error) {
+  } catch (error) { 
     res.status(401).json(error.message);
   } 
 };
