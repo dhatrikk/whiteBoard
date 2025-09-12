@@ -7,7 +7,15 @@ require("dotenv").config();
 const app = express();
 
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",                     
+  process.env.FRONTEND_URL                   
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
 
 connectToDB();
@@ -19,7 +27,7 @@ const canvasroutes = require("./routes/canvasroutes.js");
 app.use("/user",userroutes);
 app.use("/",canvasroutes);
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5050;
 
 app.listen(PORT,()=>{
 console.log(`${PORT} connected`);
