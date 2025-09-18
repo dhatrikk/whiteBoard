@@ -46,7 +46,7 @@ const userroutes = require("./routes/userroutes.js");
 const canvasroutes = require("./routes/canvasroutes.js");
 
 app.use("/user", userroutes);
-app.use("/", canvasroutes);
+app.use("/canvas", canvasroutes);
 
 // ✅ Start server
 const PORT = process.env.PORT || 5050;

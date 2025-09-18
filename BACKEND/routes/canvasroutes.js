@@ -3,11 +3,11 @@ const authenticationMiddleware= require("../middlewares/authenticationMiddleware
 const express= require("express");
 const router = express.Router();
 
-router.get("/canvas",authenticationMiddleware,getAllCanvas);
-router.post("/canvas",authenticationMiddleware,createCanvas);
-router.get("/canvas/:id",authenticationMiddleware,loadCanvas);
-router.put("/canvas/update/:id",authenticationMiddleware,updateCanvas);
-router.delete("/canvas/delete/:id",authenticationMiddleware,deleteCanvas);
-router.put("/canvas/shareCanvas/:id",authenticationMiddleware,shareCanvas);
+router.get("/",authenticationMiddleware,getAllCanvas);
+router.post("/",authenticationMiddleware,createCanvas);
+router.get("/:id",authenticationMiddleware,loadCanvas);
+router.put("/update/:id",authenticationMiddleware,updateCanvas);
+router.delete("/delete/:id",authenticationMiddleware,deleteCanvas);
+router.put("/shareCanvas/:id",authenticationMiddleware,shareCanvas);
 
 module.exports=router;
