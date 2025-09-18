@@ -41,6 +41,11 @@ app.use((req, res, next) => {
 // ✅ Connect DB
 connectToDB();
 
+// Debug logs
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+console.log("User routes type:", typeof userroutes);
+console.log("Canvas routes type:", typeof canvasroutes);
+
 // ✅ Routes
 const userroutes = require("./routes/userroutes.js");
 const canvasroutes = require("./routes/canvasroutes.js");
