@@ -6,7 +6,7 @@ const registerUser = async function (req, res) {
     const newUser = await userModel.registerUser(req.body);
     res.status(201).json({ newUser });
   } catch (error) { 
-    res.status(401).json(error.message);
+    res.status(400).json({ message: error.message });
   } 
 };
 
@@ -25,7 +25,7 @@ const loginUser = async function (req, res) {
 
     res.status(201).json({ token });
   } catch (error) {
-    res.status(401).json(error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -46,7 +46,7 @@ const getUser = async function (req, res) {
     const user = await userModel.getUser(email);
     res.status(201).json({ user });
   } catch (error) {
-    res.status(401).json(error.message);
+    res.status(400).json({ message: error.message });
   }
 };
 

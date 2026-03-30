@@ -73,9 +73,9 @@ function Login() {
         <button
         type="button"
         onClick={() => navigate("/")}
-        className="w-full text-blue-500 hover:text-blue-700 font-medium transition"
+        className="w-full text-blue-600 hover:underline text-sm mt-2"
       >
-        Create a new account
+        New user? Register
       </button>
       </form>
     </div>
